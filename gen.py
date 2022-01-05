@@ -4,15 +4,12 @@ import os
 import random
 
 
-#Global Variables
-
+# --- Global Variables
 __OUTPUT__FOLDER__NAME = "pdfs"
 
+# --- Functions
 
-
-#Functions
-
-#Log Error -> Logs an error to the console and terminates program
+#Log Error : Logs an error to the console and terminates program
 def __ERROR__(error_message):
 
     if type(error_message) != str:
@@ -105,7 +102,7 @@ def generatePDF(guest_name_1, guest_name_2):
     pdf.output(f'{__OUTPUT__FOLDER__NAME}/{guest_name_1}_AND_{guest_name_2}.pdf')
 
 
-#Main Script
+# --- Main Script
 if __name__ == '__main__':
     
     #Check if output folder exists and create if it doesnt
@@ -134,7 +131,7 @@ if __name__ == '__main__':
         PDF_COUNT += 1
         i += 2
 
-    #Log Stats
+    #Log Summary
     print("\n === SUMMARY ===\n")
     print(f" Guest Count : {len(names)}")
     print(f" PDFs Generated : {PDF_COUNT}")
@@ -142,6 +139,5 @@ if __name__ == '__main__':
     print(" === END ===\n")
 
     
-
 
 
