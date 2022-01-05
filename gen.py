@@ -7,7 +7,7 @@ import random
 # --- Global Variables
 __OUTPUT__FOLDER__NAME__ = "pdfs"
 __INPUT__CSV__ = "names.csv"
-__BINGO__RANGE__ = (1,75)
+__BINGO__RANGE__ = (1,60)
 __BINGO__NUMBERS__ = []
 
 # --- Functions
@@ -106,6 +106,7 @@ def generatePDF(guest_name_1, guest_name_2):
     bingo_nums_2 = getBingoNumbers()
     __BINGO__NUMBERS__.append(bingo_nums_1)
     __BINGO__NUMBERS__.append(bingo_nums_2)
+
 
 
     for row in range(0,5):
