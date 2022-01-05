@@ -5,7 +5,8 @@ import random
 
 
 # --- Global Variables
-__OUTPUT__FOLDER__NAME = "pdfs"
+__OUTPUT__FOLDER__NAME__ = "pdfs"
+__INPUT__CSV__ = "names.csv"
 
 # --- Functions
 
@@ -99,19 +100,19 @@ def generatePDF(guest_name_1, guest_name_2):
     pdf.cell(100,30,guest_name_2, align="C", border=__BORDER__)
 
     #Save PDF
-    pdf.output(f'{__OUTPUT__FOLDER__NAME}/{guest_name_1}_AND_{guest_name_2}.pdf')
+    pdf.output(f'{__OUTPUT__FOLDER__NAME__}/{guest_name_1}_AND_{guest_name_2}.pdf')
 
 
 # --- Main Script
 if __name__ == '__main__':
     
     #Check if output folder exists and create if it doesnt
-    if os.path.isdir(__OUTPUT__FOLDER__NAME) == False :
-        os.mkdir(__OUTPUT__FOLDER__NAME)
+    if os.path.isdir(__OUTPUT__FOLDER__NAME__) == False :
+        os.mkdir(__OUTPUT__FOLDER__NAME__)
 
 
     #Get Guest List
-    names = getGuestsFromCSV("names.csv")
+    names = getGuestsFromCSV(__INPUT__CSV__)
 
     #Generate PDFS
     i = 0
@@ -135,7 +136,7 @@ if __name__ == '__main__':
     print("\n === SUMMARY ===\n")
     print(f" Guest Count : {len(names)}")
     print(f" PDFs Generated : {PDF_COUNT}")
-    print(f" PDFs have been saved to the folder '{__OUTPUT__FOLDER__NAME}'.\n")
+    print(f" PDFs have been saved to the folder '{__OUTPUT__FOLDER__NAME__}'.\n")
     print(" === END ===\n")
 
     
