@@ -7,7 +7,8 @@ import random
 # --- Global Variables
 __OUTPUT__FOLDER__NAME__ = "pdfs"
 __INPUT__CSV__ = "names.csv"
-__BINGO__NUMBERS_ = []
+__BINGO__RANGE__ = (1,75)
+__BINGO__NUMBERS__ = []
 
 # --- Functions
 
@@ -20,13 +21,41 @@ def __ERROR__(error_message):
     print("\nERROR : " + error_message + '\n')
     exit()
 
+#CheckForDuplicates : Checks for duplicates in an array
+def checkForDuplicates(ARRAY_IN):
+    
+    if type(ARRAY_IN) != list:
+        __ERROR__("checkForDuplicates() expects a list type")
 
-#getBingoNumbers : generates 5x10 array of random numbers (1-75)
+    newlist = []
+
+    if type(ARRAY_IN[0]) == list:
+        seen = set()
+
+        for item in ARRAY_IN :
+            t = tuple(item)
+
+            if t not in seen:
+                newlist.append(item)
+                seen.add(t)
+        
+    else :
+        newlist = set(ARRAY_IN)
+    
+    if len(newlist) != len(ARRAY_IN):
+            __ERROR__(f"Duplicate in array [TYPE = {type(ARRAY_IN[0])}]")
+
+
+
+#getBingoNumbers : generates 5x5 array of random numbers (1-75)
 def getBingoNumbers():
-    random_numbers = []
-    for i in range(0,50):
-        random_numbers.append(random.randint(1,75))
-    return random_numbers
+
+    num_bank = [x for x in range(__BINGO__RANGE__[0],__BINGO__RANGE__[1] + 1)]
+    bingo_numbers = random.sample(num_bank, 25)
+
+    checkForDuplicates(bingo_numbers)
+    return bingo_numbers
+
 
 
 #getGuests : gets guest list from spreadsheet
@@ -73,19 +102,37 @@ def generatePDF(guest_name_1, guest_name_2):
 
 
     #Generate Bingo Boards
-    bingo_nums = getBingoNumbers()
-    __BINGO__NUMBERS_.append(bingo_nums)
-    for i in range(0,50):
-        if i%5 == 0 :
-            pdf.cell(40,20,"")
+    bingo_nums_1 = getBingoNumbers()
+    bingo_nums_2 = getBingoNumbers()
+    __BINGO__NUMBERS__.append(bingo_nums_1)
+    __BINGO__NUMBERS__.append(bingo_nums_2)
 
-        if i == 22 or i == 27:
-            pdf.cell(15,15,"UNMS",ln=((i + 1) % 10 == 0) ,border=True, align="C")
-            continue
 
-        pdf.cell(15,15,str(bingo_nums[i]),ln=((i + 1) % 10 == 0) ,border=True, align="C")
-    
+    for row in range(0,5):
 
+        pdf.cell(40,20,"")
+
+        #First Guest
+        for i in range(0 + (5*row), 5 + (5*row)):
+            if i == 12 :
+                pdf.cell(15,15,"UNMS",ln= (i == 5 + (5*row) - 1) ,border=True, align="C")
+                continue 
+
+            pdf.cell(15,15,str(bingo_nums_1[i]),ln=False ,border=True, align="C")
+
+        #Horizontal Spacing
+        pdf.cell(40,20,"")
+
+        #Second Guest
+        for i in range(0 + (5*row), 5 + (5*row)):
+            if i == 12 :
+                pdf.cell(15,15,"UNMS",ln= (i == 5 + (5*row) - 1) ,border=True, align="C")
+                continue 
+
+            pdf.cell(15,15,str(bingo_nums_2[i]),ln= (i == 5 + (5*row) - 1) ,border=True, align="C")
+
+
+            
     #Spacing Vertical
     pdf.cell(0,50,"", ln=True)
 
@@ -136,28 +183,19 @@ if __name__ == '__main__':
 
     
     #Check for duplicates in bingo and throw error if not unique
-    seen = set()
-    newlist = []
-
-    for item in __BINGO__NUMBERS_ :
-        t = tuple(item)
-
-        if t not in seen:
-            newlist.append(item)
-            seen.add(t)
-    
-    if len(newlist) != len(__BINGO__NUMBERS_):
-        __ERROR__("Duplicates in bingo numbers")
-
-
+    checkForDuplicates(__BINGO__NUMBERS__)
 
     #Log Summary
     print("\n === SUMMARY ===\n")
     print(f" Guest Count : {len(names)}")
     print(f" PDFs Generated : {PDF_COUNT}")
-    print(f" PDFs have been saved to the folder '{__OUTPUT__FOLDER__NAME__}'.\n")
+    print(f" Number of bingo sets generated : {len(__BINGO__NUMBERS__)}")
+    print(f"\n PDFs have been saved to the folder '{__OUTPUT__FOLDER__NAME__}'.\n")
     print(" === END ===\n")
 
     
+
+
+
 
 
