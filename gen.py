@@ -1,6 +1,15 @@
 from fpdf import FPDF
 import csv
+import os
 import random
+
+
+#Global Variables
+
+__OUTPUT__FOLDER__NAME = "pdfs"
+
+
+
 #Functions
 
 #Log Error -> Logs an error to the console and terminates program
@@ -24,6 +33,9 @@ def getBingoNumbers():
 #getGuests : gets guest list from spreadsheet
 def getGuestsFromCSV(FILENAME):
     
+    if type(FILENAME) != str or FILENAME.find(".csv") == -1:
+        __ERROR__("Invalid Filename")
+
     names_full = None
     final_names = []
 
@@ -40,8 +52,6 @@ def getGuestsFromCSV(FILENAME):
             continue
 
         final_names.append(name[0])
-
-        print(final_names)
     
     return final_names
 
@@ -69,11 +79,15 @@ def generatePDF(guest_name_1, guest_name_2):
         if i%5 == 0 :
             pdf.cell(40,20,"")
 
+        if i == 22 or i == 27:
+            pdf.cell(15,15,"UNMS",ln=((i + 1) % 10 == 0) ,border=True, align="C")
+            continue
+
         pdf.cell(15,15,str(bingo_nums[i]),ln=((i + 1) % 10 == 0) ,border=True, align="C")
     
 
     #Spacing Vertical
-    pdf.cell(0,30,"", ln=True)
+    pdf.cell(0,50,"", ln=True)
 
     #Spacing Horizontal
     pdf.cell(25,1,"")
@@ -88,28 +102,44 @@ def generatePDF(guest_name_1, guest_name_2):
     pdf.cell(100,30,guest_name_2, align="C", border=__BORDER__)
 
     #Save PDF
-    pdf.output(f'{guest_name_1}_AND_{guest_name_2}.pdf')
-
+    pdf.output(f'{__OUTPUT__FOLDER__NAME}/{guest_name_1}_AND_{guest_name_2}.pdf')
 
 
 #Main Script
 if __name__ == '__main__':
     
+    #Check if output folder exists and create if it doesnt
+    if os.path.isdir(__OUTPUT__FOLDER__NAME) == False :
+        os.mkdir(__OUTPUT__FOLDER__NAME)
+
+
+    #Get Guest List
     names = getGuestsFromCSV("names.csv")
 
+    #Generate PDFS
     i = 0
+    PDF_COUNT = 0
     while( i < len(names) ):
 
         guestA = names[i]
 
         if i + 1 >= len(names):
             guestB = "END"
+        
         else :
             guestB = names[i + 1]
         
         generatePDF(guestA, guestB)
 
+        PDF_COUNT += 1
         i += 2
+
+    #Log Stats
+    print("\n === SUMMARY ===\n")
+    print(f" Guest Count : {len(names)}")
+    print(f" PDFs Generated : {PDF_COUNT}")
+    print(f" PDFs have been saved to the folder '{__OUTPUT__FOLDER__NAME}'.\n")
+    print(" === END ===\n")
 
     
 
