@@ -50,12 +50,43 @@ def checkForDuplicates(ARRAY_IN):
 #getBingoNumbers : generates 5x5 array of random numbers (1-75)
 def getBingoNumbers():
 
-    num_bank = [x for x in range(__BINGO__RANGE__[0],__BINGO__RANGE__[1] + 1)]
-    bingo_numbers = random.sample(num_bank, 25)
+    bingo_numbers = []
+    
+    #Get Columns
 
+    #B (1-15)
+    B = [x for x in range(1, 16)]
+    B = random.sample(B, 5)
+    #I (16-30)
+    I = [x for x in range(16, 31)]
+    I = random.sample(I, 5)
+    #N (31-45)
+    N = [x for x in range(31, 46)]
+    N = random.sample(N, 5)
+    #G (46-60)
+    G = [x for x in range(46, 61)]
+    G = random.sample(G, 5)
+    #O (61-75)
+    O = [x for x in range(61, 76)]
+    O = random.sample(O, 5)
+
+    bingo_cols = [B, I, N, G, O]
+
+    #check uniqueness (paranoid i know)
+    checkForDuplicates(bingo_cols)
+    for col in bingo_cols:
+        checkForDuplicates(col)
+    
+
+    #Flatten
+    for row in range(0,5):
+        for col in range(0, 5):
+            bingo_numbers.append(bingo_cols[col][row])
+    
+    #bc i am paranoid (even though its obvious)
     checkForDuplicates(bingo_numbers)
-    return bingo_numbers
 
+    return bingo_numbers
 
 
 #getGuests : gets guest list from spreadsheet
@@ -98,7 +129,7 @@ def generatePDF(guest_name_1, guest_name_2):
     pdf.add_font("Nautical-Reg", "", "TheNautigal-Regular.ttf", uni=True)
     pdf.add_font("GreatVibes", '', 'GreatVibes-Regular.ttf', uni=True)
 
-    pdf.set_font("helvetica")
+    pdf.set_font("helvetica", size=25)
 
 
     #Generate Bingo Boards
@@ -107,7 +138,24 @@ def generatePDF(guest_name_1, guest_name_2):
     __BINGO__NUMBERS__.append(bingo_nums_1)
     __BINGO__NUMBERS__.append(bingo_nums_2)
 
+    bingo_letters = ['B', 'I', 'N', 'G', 'O']
+    
+    pdf.cell(40,20,"")
 
+    #First BINGO Letters
+    for k in range(0,5):
+        pdf.cell(15,15,bingo_letters[k], ln=False, border=False, align='C')
+    
+    #Horizontal Spacing
+    pdf.cell(40,20,"")
+
+    #Second BINGO Letters
+    for k in range(0,5):
+        pdf.cell(15,15,bingo_letters[k], ln=(k + 1 == 5), border=False, align='C')
+
+
+    #BINGO NUMBERS
+    pdf.set_font("helvetica", size=12)
 
     for row in range(0,5):
 
