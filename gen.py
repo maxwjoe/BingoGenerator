@@ -1,4 +1,5 @@
 from fpdf import FPDF
+import PyPDF2
 import csv
 import os
 import random
@@ -116,7 +117,7 @@ def getGuestsFromCSV(FILENAME):
 
 
 #generatePDF : generates and save pdf
-def generatePDF(guest_name_1, guest_name_2):
+def generatePDF(guest_name_1, guest_name_2, PDF_COUNT):
 
     #Handle Invalid Input
     if type(guest_name_1) != str or type(guest_name_2) != str:
@@ -198,7 +199,9 @@ def generatePDF(guest_name_1, guest_name_2):
     pdf.cell(100,30,guest_name_2, align="C", border=__BORDER__)
 
     #Save PDF
-    pdf.output(f'{__OUTPUT__FOLDER__NAME__}/{guest_name_1}_AND_{guest_name_2}.pdf')
+    #pdf.output(f'{__OUTPUT__FOLDER__NAME__}/{PDF_COUNT}.pdf')
+    pdf.output(f'{PDF_COUNT}.pdf')
+
 
 
 # --- Main Script
@@ -225,7 +228,7 @@ if __name__ == '__main__':
         else :
             guestB = names[i + 1]
         
-        generatePDF(guestA, guestB)
+        generatePDF(guestA, guestB, PDF_COUNT)
 
         PDF_COUNT += 1
         i += 2
@@ -234,12 +237,24 @@ if __name__ == '__main__':
     #Check for duplicates in bingo and throw error if not unique
     checkForDuplicates(__BINGO__NUMBERS__)
 
+
+    #MERGE PDFS
+    MASTER_PDF_NAME = "merged"
+    MASTER_PDF = PyPDF2.PdfFileMerger()
+
+    for i in range(0, PDF_COUNT):
+        MASTER_PDF.append(PyPDF2.PdfFileReader(f'{i}.pdf', 'rb'))
+    
+    MASTER_PDF.write(f"{MASTER_PDF_NAME}.pdf")
+
+
     #Log Summary
     print("\n === SUMMARY ===\n")
     print(f" Guest Count : {len(names)}")
     print(f" PDFs Generated : {PDF_COUNT}")
     print(f" Number of bingo sets generated : {len(__BINGO__NUMBERS__)}")
-    print(f"\n PDFs have been saved to the folder '{__OUTPUT__FOLDER__NAME__}'.\n")
+    print(f"\n Individual PDFs have been saved to the folder '{__OUTPUT__FOLDER__NAME__}'.\n")
+    print(f" A PDF with all PDFs merged has been saved outside this folder with the name {MASTER_PDF_NAME}.\n")
     print(" === END ===\n")
 
     
