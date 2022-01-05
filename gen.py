@@ -7,6 +7,7 @@ import random
 # --- Global Variables
 __OUTPUT__FOLDER__NAME__ = "pdfs"
 __INPUT__CSV__ = "names.csv"
+__BINGO__NUMBERS_ = []
 
 # --- Functions
 
@@ -73,6 +74,7 @@ def generatePDF(guest_name_1, guest_name_2):
 
     #Generate Bingo Boards
     bingo_nums = getBingoNumbers()
+    __BINGO__NUMBERS_.append(bingo_nums)
     for i in range(0,50):
         if i%5 == 0 :
             pdf.cell(40,20,"")
@@ -131,6 +133,23 @@ if __name__ == '__main__':
 
         PDF_COUNT += 1
         i += 2
+
+    
+    #Check for duplicates in bingo and throw error if not unique
+    seen = set()
+    newlist = []
+
+    for item in __BINGO__NUMBERS_ :
+        t = tuple(item)
+
+        if t not in seen:
+            newlist.append(item)
+            seen.add(t)
+    
+    if len(newlist) != len(__BINGO__NUMBERS_):
+        __ERROR__("Duplicates in bingo numbers")
+
+
 
     #Log Summary
     print("\n === SUMMARY ===\n")
